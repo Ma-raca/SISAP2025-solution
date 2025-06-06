@@ -390,10 +390,12 @@ def main(args):
         writer.writerow(d)
 
 if __name__ == "__main__":
+    
     LOG_FILE = "sys_usage.log"
     FILE_CHANGE_LOG = "file_changes.log"
     INTERVAL = 2
     WATCH_DIR = os.path.expanduser("./data/build")
+    os.makedirs(WATCH_DIR, exist_ok=True)
 
     stop_event = Event()
     monitor_proc = Process(target=monitor_resources, args=(LOG_FILE, INTERVAL, stop_event, WATCH_DIR))
@@ -445,7 +447,7 @@ if __name__ == "__main__":
         default=["200"]
     )  
     parser.add_argument(
-        "-K",
+        "--K",
         help='Parameter K, the number of nearest neighbors search',
         default=30
     )      
