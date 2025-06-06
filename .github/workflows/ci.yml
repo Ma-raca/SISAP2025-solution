@@ -38,7 +38,7 @@ jobs:
 
       - name: Run Python script
         run: |
-          python RunAndEval.py --results ./results.csv --dataname ccnews --R 64 --LB 100 --B 3 --M 4 --T 8 -LS 200 --K 30
+          python RunAndEval.py --results ./results.csv --dataname ccnews-fp16 --R 64 --LB 100 --B 3 --M 4 --T 8 -LS 200 --K 30
 
       - name: Upload results
         uses: actions/upload-artifact@v4
