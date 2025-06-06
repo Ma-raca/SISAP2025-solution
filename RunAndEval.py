@@ -122,7 +122,7 @@ def export_queries(h5_path, data_key, out_bin, align_bytes=64):
 
 from sklearn.preprocessing import normalize
 
-def export_full_data_with_pca(h5_path, data_key, out_bin, pca_model_path, align_bytes=64, max_sample_size=100000, pca_dim=192):
+def export_full_data_with_pca(h5_path, data_key, out_bin, pca_model_path, pca_dim=192, align_bytes=64, max_sample_size=100000):
     """
     Export data to .bin format, with PCA and normalization, batch processing.
     """
@@ -237,6 +237,7 @@ def export_gt_bin(h5_path, knns_key, dists_key, out_bin, index_base=1):
 def main(args):
     DATASET_NAME = args.dataname
     H5_DIR = f'./data/{DATASET_NAME}/task1/'
+
     H5_FILE = f'benchmark-dev-{DATASET_NAME}.h5'
     h5_file = os.path.join(H5_DIR, H5_FILE)
     
@@ -282,7 +283,7 @@ def main(args):
     if not os.path.exists(OUTPUTS['train_bin']):
         print(f"[INFO] Exporting {DATA_KEYS['train']} → {OUTPUTS['train_bin']}")
         # export_full_data(h5_file, DATA_KEYS['train'], OUTPUTS['train_bin'])
-        export_full_data_with_pca(h5_file, DATA_KEYS['train'], OUTPUTS['train_bin'], PCA_MODEL_PATH)
+        export_full_data_with_pca(h5_file, DATA_KEYS['train'], OUTPUTS['train_bin'], PCA_MODEL_PATH,args.RD)
     else:
         print(f"[INFO] {OUTPUTS['train_bin']} already exists, skipping export")
 
@@ -370,6 +371,7 @@ def main(args):
     "T": args.T,
     "LS": args.LS,
     "K": args.K,
+    "RD": args.RD,
     "distance_metric": distance_metric,
     }
     params_str = str(params)
@@ -391,18 +393,6 @@ def main(args):
 
 if __name__ == "__main__":
     
-    LOG_FILE = "sys_usage.log"
-    FILE_CHANGE_LOG = "file_changes.log"
-    INTERVAL = 2
-    WATCH_DIR = os.path.expanduser("./data/build")
-    os.makedirs(WATCH_DIR, exist_ok=True)
-
-    stop_event = Event()
-    monitor_proc = Process(target=monitor_resources, args=(LOG_FILE, INTERVAL, stop_event, WATCH_DIR))
-    file_monitor_proc = Process(target=monitor_file_changes, args=(WATCH_DIR, FILE_CHANGE_LOG, INTERVAL, stop_event))
-    monitor_proc.start()
-    file_monitor_proc.start()
-
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--results",
@@ -450,17 +440,13 @@ if __name__ == "__main__":
         "--K",
         help='Parameter K, the number of nearest neighbors search',
         default=30
-    )      
+    )    
+    parser.add_argument(
+        "--RD",
+        type=int,
+        help='Parameter RD, the target dimensions for PCA',
+        default=208
+    )       
     args = parser.parse_args()
 
-    print("[INFO] Resource monitoring started, main program will start in 10 seconds...")
-    time.sleep(10)
-
-    try:
-        main(args)
-    finally:
-        stop_event.set()
-        monitor_proc.join()
-        file_monitor_proc.join()
-        print("[INFO] Resource monitoring stopped")
-    # main()
+    main(args)
