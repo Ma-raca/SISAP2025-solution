@@ -44,7 +44,7 @@ RUN mkdir -p build && \
     cmake --build build -- -j
 
 # 安装 Python 依赖（如有 requirements.txt）
-RUN python3.11 -m pip install --upgrade pip && \
+RUN python3.10 -m pip install --upgrade pip && \
     if [ -f requirements.txt ]; then python3.10 -m pip install -r requirements.txt; fi
 
 # 默认入口：可交互或直接运行脚本
