@@ -48,5 +48,4 @@ RUN python3.10 -m pip install --upgrade pip && \
     if [ -f requirements.txt ]; then python3.10 -m pip install -r requirements.txt; fi
 
 # 默认入口：可交互或直接运行脚本
-# 本机数据存放位置 mnt/python/PCAdr/data/pubmed23/benchmark-dev-pubmed23.h5
 CMD ["python3","RunAndEval.py"]
